@@ -77,11 +77,13 @@ public class DS_My<K extends Comparable<K>, V> implements DataStructureADT {
       this.head = newNode;
       this.tail = newNode;
       newNode.setPrev(null);
+    } else if(this.head.getNext()== this.tail) {
+      newNode.setPrev(head);
     }
-    else
+    else {
       newNode.setPrev(tail);
       tail.setNext(newNode);
-    
+    }
     
     this.size++;
 
@@ -99,7 +101,7 @@ public class DS_My<K extends Comparable<K>, V> implements DataStructureADT {
     if (contains(k)) {
       //change reference
       node deleteNode = nodeAtKey(k);
-      
+        
       if(deleteNode.equals(this.head)) {
         this.head = null;
       } else {

@@ -103,15 +103,76 @@ abstract class DataStructureADTTest<T extends DataStructureADT<String, String>> 
       fail("No element is inside. Remove should return false, but returned true instead.");
   }
 
+@Test
+void test_addRemoveAdd() {
+
+  try {
+    dataStructureInstance.insert("second", "ABC");
+    dataStructureInstance.remove("second");
+    dataStructureInstance.insert("second", "ABC");
+  } catch (RuntimeException e) {
+    fail("Shouldn't throw RuntimeException");
+  } catch (Exception e) {
+    fail("Shouldn't throw any Exception");
+  }
+}
+
+@Test
+void test_insertNull() {
+  boolean pass = false;
+
+  try {
+    dataStructureInstance.insert(null, "ABC");
+  } catch (IllegalArgumentException e) {
+    pass = true;
+  } catch (Exception e) {
+    pass = false;
+    fail("Should throw IllegalArgumentException");
+  }
+
+
+  if (!pass)
+    fail("Should throw IllegalArgumentException");
+
+}
+
+@Test
+void test_insert600andRemove() {
+
+  try {
+    for(int i=0; i< 600; i++) {
+      
+      String key = i+"_key";
+      
+      dataStructureInstance.insert(key, "ABC");
+//      System.out.println("Added " + key);
+    }
+    
+  } catch (Exception e) {
+    fail("Can't add 500+ elements");
+  }
+  
+  try {
+    for(int i=0; i< 600; i++) {
+      String key = i+"_key";
+      
+      dataStructureInstance.remove(key);
+//      System.out.println("Remove " + key);
+    }
+    
+  } catch (Exception e) {
+    fail("Can't remove 500+ elements");
+  }
+  
+
+}
 
 
   // TODO: add tests to ensure that you can detect implementation that fail
 
   // Tip: consider different numbers of inserts and removes and how different combinations of insert
   // and removes
-  // test remove returns true and size decrements
 
-  // insert null key
 
   // consider different sequences of inserts and removes. Check results of method like: size(),
   // contains(), remove(). Can you figure out if those methods work or not?
