@@ -1,16 +1,52 @@
+//////////////////// ALL ASSIGNMENTS INCLUDE THIS SECTION /////////////////////
+//
+// Title: DataStructureADT
+// Course: CS400, Spring 2019
+//
+// Author: Ajmain Naqib
+// Email: naqib@wisc.edu
+// Lecturer's Name: Deb Deppeler
+//
+//
+///////////////////////////// CREDIT OUTSIDE HELP /////////////////////////////
+//
+// Students who get help from sources other than their partner must fully
+// acknowledge and credit those sources of help here. Instructors and TAs do
+// not need to be credited here, but tutors, friends, relatives, room mates,
+// strangers, and others do. If you received no outside help from either type
+// of source, then please explicitly indicate NONE.
+//
+// Persons: None
+// Online Sources: None
+/////////////////////////////// 80 COLUMNS WIDE ///////////////////////////////
+
+/**
+ * Implementation of DataStructureADT
+ * 
+ * @author: Ajmain Naqib
+ * @email: naqib@wisc.edu
+ */
 
 public class DS_My<K extends Comparable<K>, V> implements DataStructureADT {
 
-  // TODO may wish to define an inner class
-  // for storing key and value as a pair
-  // such a class and its members should be "private"
+  /**
+   * An inner class for for storing key and value as a pair
+   * 
+   * @author Naqib
+   *
+   */
+  private class node {
+    private node next; // Reference to next node
+    private node prev; // reference to previous node
+    private Comparable key; // reference to key
+    private Object value; // reference to value
 
-  protected class node {
-    private node next;
-    private node prev;
-    private Comparable key;
-    private Object value;
-
+    /**
+     * Creates a new Node
+     * 
+     * @param k
+     * @param v
+     */
     public node(Comparable k, Object v) {
       this.key = k;
       this.value = v;
@@ -18,49 +54,81 @@ public class DS_My<K extends Comparable<K>, V> implements DataStructureADT {
       this.next = null;
     }
 
+    /**
+     * Sets reference of previous node
+     * 
+     * @param prev
+     */
     public void setPrev(node prev) {
       this.prev = prev;
     }
-    
+
+    /**
+     * Returns reference of previous node
+     * 
+     */
     public node getPrev() {
       return this.prev;
     }
-    
+
+    /**
+     * Sets reference of next node
+     * 
+     * @param next
+     */
     public void setNext(node next) {
       this.next = next;
     }
 
+    /**
+     * Returns reference of next node
+     * 
+     */
     public node getNext() {
       return this.next;
     }
 
+    /**
+     * Returns reference of current value
+     * 
+     */
     public Object getValue() {
       return this.value;
     }
-    
+
+    /**
+     * Returns reference of current key
+     * 
+     */
     public Comparable getKey() {
       return this.key;
     }
+
+
   }
-
-
 
   // Private Fields of the class
   private int size;
   private node head;
   private node tail;
 
+  /**
+   * Create new Datastructure implementation
+   */
   public DS_My() {
     this.size = 0;
     this.head = null;
   }
 
 
-  // Add the key,value pair to the data structure and increases size.
-  // If key is null, throws IllegalArgumentException("null key");
-  // If key is already in data structure, throws RuntimeException("duplicate key");
-  // can accept and insert null values
 
+  /**
+   * Add the key,value pair to the data structure and increases size. If key is null, throws
+   * IllegalArgumentException("null key"); If key is already in data structure, throws
+   * RuntimeException("duplicate key"); can accept and insert null values
+   * 
+   * param k, v
+   */
   @Override
   public void insert(Comparable k, Object v) {
     if (k == null) {
@@ -75,23 +143,29 @@ public class DS_My<K extends Comparable<K>, V> implements DataStructureADT {
 
     if (this.head == null) {
       this.head = newNode;
-      this.tail = newNode;
-      newNode.setPrev(null);
-    } else if(this.head.getNext()== this.tail) {
-      newNode.setPrev(head);
+    } else if (this.head.getNext() == null) {
+      this.head.setNext(newNode);
+      newNode.setPrev(this.head);
+    } else {
+      newNode.setPrev(this.tail);
+      this.tail.setNext(newNode);
     }
-    else {
-      newNode.setPrev(tail);
-      tail.setNext(newNode);
-    }
-    
+
+    this.tail = newNode;
+
     this.size++;
 
   }
 
-  // If key is found, Removes the key from the data structure and decreases size
-  // If key is null, throws IllegalArgumentException("null key") without decreasing size
-  // If key is not found, returns false.
+
+  /**
+   * If key is found, Removes the key from the data structure and decreases size If key is null,
+   * throws IllegalArgumentException("null key") without decreasing size If key is not found, returns
+   * false.
+   * 
+   * param k
+   */
+
   @Override
   public boolean remove(Comparable k) {
     if (k == null) {
@@ -99,69 +173,90 @@ public class DS_My<K extends Comparable<K>, V> implements DataStructureADT {
     }
 
     if (contains(k)) {
-      //change reference
+      // changes reference properly
       node deleteNode = nodeAtKey(k);
-        
-      if(deleteNode.equals(this.head)) {
-        this.head = null;
+
+      if (deleteNode.equals(this.head)) {
+        if (deleteNode.equals(this.tail)) {
+          this.head = null;
+
+        } else {
+          this.head = deleteNode.getNext();
+          deleteNode.getNext().setPrev(null);
+        }
       } else {
         deleteNode.getPrev().setNext(deleteNode.getNext());
         deleteNode.getNext().setPrev(deleteNode.getPrev());
       }
-      
-     
+
       this.size--;
-      
+
       return true;
-    } else    
-    return false;
+    } else
+      return false;
   }
 
-  // Returns true if the key is in the data structure
-  // Returns false if key is null or not present
+  /**
+   * Returns true if the key is in the data structure and Returns false if key is null or not present
+   * 
+   * param k
+   */
   @Override
   public boolean contains(Comparable k) {
-    //if nodeAtKey is not null, then true else false
-    if(nodeAtKey(k) == null) return false;
-    else return true;
+    // if nodeAtKey is not null, then true else false
+    if (nodeAtKey(k) == null)
+      return false;
+    else
+      return true;
   }
 
-  // Returns the value associated with the specified key
-  // get - does not remove key or decrease size
-  // If key is null, throws IllegalArgumentException("null key") 
-  //THIS ASSUMES KEY EXISTS
+
+  /**
+   * Returns the value associated with the specified key get - does not remove key or decrease size If
+   * key is null, throws IllegalArgumentException("null key")
+   * 
+   * param k
+   */
   @Override
   public Object get(Comparable k) {
     if (k == null) {
       throw new IllegalArgumentException("null key");
     }
-    
+
     return nodeAtKey(k).getValue();
   }
 
+  /**
+   * Returns the number of nodes of current ds
+   */
   @Override
   public int size() {
     return this.size;
   }
-  
-  public node nodeAtKey(Comparable k) {
-    
+
+  /**
+   * Returns the node at key k if found. Otherwise returns null
+   * 
+   * @param k
+   * @returns the node at k
+   */
+  private node nodeAtKey(Comparable k) {
+
     node currNode = this.head;
-    
-    
-while(currNode != null){
-      
 
+    while (currNode != null) {
 
-      if(currNode.getKey() == k) {
+      if (currNode.getKey().compareTo(k) == 0) {
         return currNode;
+      } else {
+        currNode = currNode.next;
       }
-      currNode = currNode.next;
-      
-}
-    
+
+
+    }
+
     return null;
-    
+
   }
 
 }
