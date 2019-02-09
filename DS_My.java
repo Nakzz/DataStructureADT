@@ -37,7 +37,6 @@ public class DS_My<K extends Comparable<K>, V> implements DataStructureADT {
    */
   private class node {
     private node next; // Reference to next node
-    private node prev; // reference to previous node
     private Comparable key; // reference to key
     private Object value; // reference to value
 
@@ -50,25 +49,7 @@ public class DS_My<K extends Comparable<K>, V> implements DataStructureADT {
     public node(Comparable k, Object v) {
       this.key = k;
       this.value = v;
-      this.prev = null;
       this.next = null;
-    }
-
-    /**
-     * Sets reference of previous node
-     * 
-     * @param prev
-     */
-    public void setPrev(node prev) {
-      this.prev = prev;
-    }
-
-    /**
-     * Returns reference of previous node
-     * 
-     */
-    public node getPrev() {
-      return this.prev;
     }
 
     /**
@@ -118,6 +99,7 @@ public class DS_My<K extends Comparable<K>, V> implements DataStructureADT {
   public DS_My() {
     this.size = 0;
     this.head = null;
+    this.tail = null;
   }
 
 
@@ -143,18 +125,14 @@ public class DS_My<K extends Comparable<K>, V> implements DataStructureADT {
 
     if (this.head == null) {
       this.head = newNode;
-    } else if (this.head.getNext() == null) {
-      this.head.setNext(newNode);
-      newNode.setPrev(this.head);
     } else {
-      newNode.setPrev(this.tail);
+
       this.tail.setNext(newNode);
     }
 
     this.tail = newNode;
 
     this.size++;
-
   }
 
 
@@ -172,28 +150,29 @@ public class DS_My<K extends Comparable<K>, V> implements DataStructureADT {
       throw new IllegalArgumentException("null key");
     }
 
-    if (contains(k)) {
-      // changes reference properly
-      node deleteNode = nodeAtKey(k);
-
-      if (deleteNode.equals(this.head)) {
-        if (deleteNode.equals(this.tail)) {
-          this.head = null;
-
-        } else {
-          this.head = deleteNode.getNext();
-          deleteNode.getNext().setPrev(null);
-        }
-      } else {
-        deleteNode.getPrev().setNext(deleteNode.getNext());
-        deleteNode.getNext().setPrev(deleteNode.getPrev());
-      }
-
-      this.size--;
-
-      return true;
-    } else
-      return false;
+     if (contains(k)) {
+     // changes reference properly
+     node deleteNode = nodeAtKey(k);
+    
+     if (deleteNode.equals(this.head)) {
+       
+     this.head = deleteNode.getNext();
+     } else {
+       
+       node searchingNode = this.head.getNext();
+       node prevNode = null;
+       while(!searchingNode.equals(deleteNode)) {
+         prevNode = searchingNode;
+         searchingNode = searchingNode.getNext();
+       }
+       prevNode.setNext(searchingNode.getNext());
+     }
+    
+     this.size--;
+    
+     return true;
+     } else
+    return false;
   }
 
   /**
@@ -249,14 +228,12 @@ public class DS_My<K extends Comparable<K>, V> implements DataStructureADT {
       if (currNode.getKey().compareTo(k) == 0) {
         return currNode;
       } else {
-        currNode = currNode.next;
+        currNode = currNode.getNext();
       }
-
-
     }
-
+    
     return null;
-
+    
   }
 
 }
